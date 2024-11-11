@@ -250,7 +250,7 @@ void ReadCurrent() {
 void uploadDataToCloud() {
   if (WiFi.status() == WL_CONNECTED) {
     HTTPClient http;
-    http.begin("http://your-server.com/upload");  // Replace with your server's URL
+    http.begin("https://script.google.com/macros/s/AKfycbzjJAuUwRosmwQZWSvGBn2dY2uH19hbyBDyabYdUSs4KFBKvPmMTCjjFHzxYIIbrOw/exec");  // Replace with your server's URL
     http.addHeader("Content-Type", "application/json");
 
     // Create JSON string with data
@@ -284,7 +284,7 @@ void uploadDataToCloud() {
     uploadCompleted = false;  // Ensure the flag is not set if not connected
   }
 }
-
-
+//https://script.google.com/macros/s/AKfycbzjJAuUwRosmwQZWSvGBn2dY2uH19hbyBDyabYdUSs4KFBKvPmMTCjjFHzxYIIbrOw/exec
+//AKfycbzjJAuUwRosmwQZWSvGBn2dY2uH19hbyBDyabYdUSs4KFBKvPmMTCjjFHzxYIIbrOw
 
 
