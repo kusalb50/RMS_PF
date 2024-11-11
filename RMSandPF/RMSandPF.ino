@@ -13,6 +13,9 @@
 #include <LiquidCrystal_I2C.h>
 #define ZMPT101B_Pin 35  // Voltage sensor pin
 #define ACS712_Pin 34    // Current Sensor pin
+//wifi settings
+char ssid[] = "Eng-Student";
+char pass[] = "3nG5tuDt";
 // RMS Filter parameters
 float VtestFrequency = 50;  // Test signal frequency for voltage (Hz)
 float CtestFrequency = 50;  // Test signal frequency for current (Hz)
