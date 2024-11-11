@@ -57,6 +57,8 @@ float averageDifference = 0;
 esp_timer_handle_t timerHandle;
 unsigned long lastSampleTime = 0;  // Variable to keep track of the last sampling time
 bool samplingReady = false;  // Flag to indicate sampling completion
+int timerCounter = 0;  // Counter to track the number of times the timer function runs
+bool uploadCompleted = false;  // Flag to indicate when the data upload is complete
 LiquidCrystal_I2C lcd(0x27, 20, 4);  // set the LCD address to 0x27 for a 16 chars and 2 line display
 
 void IRAM_ATTR onTimer(void* arg) {
@@ -193,13 +195,43 @@ void setup() {
 void loop() {
   // Check if 12 seconds have passed since the last sample collection
   if ((millis() - lastSampleTime) >= 12000) {  // 12 seconds = 12000 ms
-    lastSampleTime = millis();                 // Reset the start time
-    //WiFi.disconnect(true);
-    sampleIndex = 0;                             // Reset the sample index
-    samplingReady = false;                       // Reset the sampling flag
-    esp_timer_start_periodic(timerHandle, 200);  // Start the timer (200µs interval = 5kHz)
+    lastSampleTime = millis();  // Reset the start time
+
+    if (timerCounter < 4) {
+      // Increment the counter and start sampling
+      timerCounter++;
+      sampleIndex = 0;  // Reset the sample index
+      samplingReady = false;  // Reset the sampling flag
+      esp_timer_start_periodic(timerHandle, 200);  // Start the timer (200µs interval = 5kHz)
+    } else {
+      // Timer has run 4 times; initiate data upload process
+      if (WiFi.status() != WL_CONNECTED) {
+        Serial.println("Reconnecting to Wi-Fi...");
+        WiFi.mode(WIFI_STA);
+        WiFi.begin(ssid, password);
+        
+        while (WiFi.status() != WL_CONNECTED) {
+          delay(500);
+          Serial.println("Waiting for Wi-Fi connection...");
+        }
+        Serial.println("Connected to Wi-Fi");
+      }
+
+      // Call the function to upload data and check for response
+      uploadDataToCloud();
+
+      // Wait until the upload is complete
+      if (uploadCompleted) {
+        // Reset the counter and disconnect Wi-Fi before restarting sampling
+        timerCounter = 0;
+        uploadCompleted = false;  // Reset the flag for the next cycle
+        WiFi.disconnect(true);
+        Serial.println("Wi-Fi disconnected. Ready to start new sampling cycle.");
+      }
     }
+  }
 }
+
 void ReadVoltage() {
   // Read voltage sampled array values
   for (int j = 0; j < 5000; j++) {
@@ -214,6 +246,45 @@ void ReadCurrent() {
   }
   // Log value to the statistics function
 }
+
+void uploadDataToCloud() {
+  if (WiFi.status() == WL_CONNECTED) {
+    HTTPClient http;
+    http.begin("http://your-server.com/upload");  // Replace with your server's URL
+    http.addHeader("Content-Type", "application/json");
+
+    // Create JSON string with data
+    String jsonData = "{\"V_TRMS\":" + String(V_TRMS) +
+                      ",\"C_TRMS\":" + String(C_TRMS) +
+                      ",\"P_factor\":" + String(P_factor) + "}";
+
+    // Send POST request
+    int httpResponseCode = http.POST(jsonData);
+    if (httpResponseCode > 0) {
+      // Get the response from the server
+      String response = http.getString();
+      Serial.println("Server response: " + response);
+
+      // Validate the response content
+      if (response == "Data received and added to the sheet") {
+        uploadCompleted = true;  // Set the flag to true if response matches
+        Serial.println("Upload confirmed: Data successfully received by the server.");
+      } else {
+        Serial.println("Unexpected server response: " + response);
+      }
+    } else {
+      // Handle failed POST request
+      Serial.println("Error in sending POST: " + String(httpResponseCode));
+      uploadCompleted = false;  // Ensure the flag is not set on failure
+    }
+    http.end();  // Close connection
+  } else {
+    // Handle Wi-Fi connection issue
+    Serial.println("Wi-Fi not connected. Cannot upload data.");
+    uploadCompleted = false;  // Ensure the flag is not set if not connected
+  }
+}
+
 
 
 
