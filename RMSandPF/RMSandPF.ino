@@ -4,8 +4,8 @@
 #include <freertos/semphr.h>
 #include <WiFi.h>
 #include <WiFiClient.h>
+#include <HTTPClient.h>
 #include <Filters.h>  // Library to use for RMS calculations
-#include <iostream>
 #include <cmath>
 #include "esp_timer.h"  // Include the ESP32 timer library
 #include <vector>
@@ -15,7 +15,7 @@
 #define ACS712_Pin 34    // Current Sensor pin
 //wifi settings
 char ssid[] = "Eng-Student";
-char pass[] = "3nG5tuDt";
+char password[] = "3nG5tuDt";
 // RMS Filter parameters
 float VtestFrequency = 50;  // Test signal frequency for voltage (Hz)
 float CtestFrequency = 50;  // Test signal frequency for current (Hz)
@@ -206,17 +206,17 @@ void loop() {
     } else {
       // Timer has run 4 times; initiate data upload process
       if (WiFi.status() != WL_CONNECTED) {
-        lcd.setCursor(0,0)
+        lcd.setCursor(0,0);
         lcd.print("Reconnecting to Wi-Fi...");
         WiFi.mode(WIFI_STA);
         WiFi.begin(ssid, password);
         
         while (WiFi.status() != WL_CONNECTED) {
           delay(500);
-          lcd.setCursor(0,1)
+          lcd.setCursor(0,1);
           lcd.print("Waiting for Wi-Fi connection...");
         }
-        lcd.setCursor(0,1)
+        lcd.setCursor(0,1);
         lcd.print("Connected to Wi-Fi");
       }
 
@@ -229,7 +229,7 @@ void loop() {
         timerCounter = 0;
         uploadCompleted = false;  // Reset the flag for the next cycle
         WiFi.disconnect(true);
-        lcd.setCursor(0,1)
+        lcd.setCursor(0,1);
         lcd.print("Wi-Fi disconnected");
       }
     }
@@ -267,24 +267,26 @@ void uploadDataToCloud() {
     if (httpResponseCode > 0) {
       // Get the response from the server
       String response = http.getString();
-      Serial.println("Server response: " + response);
-
       // Validate the response content
       if (response == "Data received and added to the sheet") {
         uploadCompleted = true;  // Set the flag to true if response matches
-        Serial.println("Upload confirmed: Data successfully received by the server.");
+        lcd.setCursor(0,1);
+        lcd.print("Upload confirmed.");
       } else {
-        Serial.println("Unexpected server response: " + response);
+        lcd.setCursor(0,1);
+        lcd.print("Unexpected response.");
       }
     } else {
       // Handle failed POST request
-      Serial.println("Error in sending POST: " + String(httpResponseCode));
+      lcd.setCursor(0,1);
+      lcd.print("Sending error POST: " + String(httpResponseCode));
       uploadCompleted = false;  // Ensure the flag is not set on failure
     }
     http.end();  // Close connection
   } else {
     // Handle Wi-Fi connection issue
-    Serial.println("Wi-Fi not connected. Cannot upload data.");
+    lcd.setCursor(0,0);
+    lcd.print("Wi-Fi not connected. Cannot upload data.");
     uploadCompleted = false;  // Ensure the flag is not set if not connected
   }
 }
