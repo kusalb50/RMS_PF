@@ -142,7 +142,7 @@ void calculateRMS(void* parameter) {
       lcd.setCursor(6, 0);
       lcd.print("V");
       lcd.setCursor(8, 0);
-      lcd.print(C_TRMS);
+      lcd.print(currentStats.sigma());
       lcd.setCursor(15, 0);
       lcd.print("I");
       lcd.setCursor(0, 1);
@@ -206,15 +206,18 @@ void loop() {
     } else {
       // Timer has run 4 times; initiate data upload process
       if (WiFi.status() != WL_CONNECTED) {
-        Serial.println("Reconnecting to Wi-Fi...");
+        lcd.setCursor(0,0)
+        lcd.print("Reconnecting to Wi-Fi...");
         WiFi.mode(WIFI_STA);
         WiFi.begin(ssid, password);
         
         while (WiFi.status() != WL_CONNECTED) {
           delay(500);
-          Serial.println("Waiting for Wi-Fi connection...");
+          lcd.setCursor(0,1)
+          lcd.print("Waiting for Wi-Fi connection...");
         }
-        Serial.println("Connected to Wi-Fi");
+        lcd.setCursor(0,1)
+        lcd.print("Connected to Wi-Fi");
       }
 
       // Call the function to upload data and check for response
@@ -226,7 +229,8 @@ void loop() {
         timerCounter = 0;
         uploadCompleted = false;  // Reset the flag for the next cycle
         WiFi.disconnect(true);
-        Serial.println("Wi-Fi disconnected. Ready to start new sampling cycle.");
+        lcd.setCursor(0,1)
+        lcd.print("Wi-Fi disconnected");
       }
     }
   }
@@ -234,14 +238,14 @@ void loop() {
 
 void ReadVoltage() {
   // Read voltage sampled array values
-  for (int j = 0; j < 5000; j++) {
+  for (int j = 0; j < 110; j++) {
     for (int i = 0; i < numSamples; ++i) { voltageStats.input(voltageSamples[i]); }
   }
   // Log value to the statistics function
 }
 
 void ReadCurrent() {
-  for (int j = 0; j < 2000; j++) {
+  for (int j = 0; j < 50; j++) {
     for (int i = 0; i < numSamples; ++i) { currentStats.input(currentSamples[i]); }
   }
   // Log value to the statistics function
