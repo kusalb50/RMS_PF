@@ -138,7 +138,7 @@ void calculateRMS(void* parameter) {
       float angle_r = ReadytoUploadCloudTD * 0.0002 * 314.0;
       P_factor = abs(cos(angle_r));
       lcd.setCursor(0, 0);
-      lcd.print(V_TRMS);
+      lcd.print(voltageStats.sigma());
       lcd.setCursor(6, 0);
       lcd.print("V");
       lcd.setCursor(8, 0);
