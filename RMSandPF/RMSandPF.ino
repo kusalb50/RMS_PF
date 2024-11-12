@@ -26,12 +26,12 @@ float CwindowLength = 40 / CtestFrequency;   // Window length for current averag
 float V_RawValue = 0;
 float V_TRMS;                  // Estimated actual voltage in Volts
 float V_intercept = 0;         // Calibration intercept (adjust as per your setup)
-float V_slope = 0.8696703961;  // Calibration slope for voltage sensor//1.9030282972,4.5247072832
+float V_slope = 0.9697472027;  // Calibration slope for voltage sensor//1.9030282972,4.5247072832,0.8696703961
 // Variables for Current Measurement
 float C_RawValue = 0;
 float C_TRMS;                                       // Estimated actual current in Amps
 float C_intercept = -0.03;                          // Calibration intercept for current sensor
-float C_slope = 0.0130316987266323489569222432945;  // Calibration slope for ACS712 current sensor//0.0115733737,0.0040750213
+float C_slope = 0.0228935698;  // Calibration slope for ACS712 current sensor//0.0115733737,0.0040750213,0.0130316987266323489569222432945
 float P_factor = 0.0;
 // Timing variables
 unsigned long printPeriod = 1500;  // Measure every 1 second
@@ -197,7 +197,7 @@ void loop() {
   if ((millis() - lastSampleTime) >= 12000) {  // 12 seconds = 12000 ms
     lastSampleTime = millis();  // Reset the start time
 
-    if (timerCounter < 4) {
+    if (timerCounter < 16) {
       // Increment the counter and start sampling
       timerCounter++;
       sampleIndex = 0;  // Reset the sample index
