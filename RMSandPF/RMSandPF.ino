@@ -138,11 +138,11 @@ void calculateRMS(void* parameter) {
       float angle_r = ReadytoUploadCloudTD * 0.0002 * 314.0;
       P_factor = abs(cos(angle_r));
       lcd.setCursor(0, 0);
-      lcd.print(voltageStats.sigma());
+      lcd.print(V_TRMS);
       lcd.setCursor(6, 0);
       lcd.print("V");
       lcd.setCursor(8, 0);
-      lcd.print(currentStats.sigma());
+      lcd.print(C_TRMS);
       lcd.setCursor(15, 0);
       lcd.print("I");
       lcd.setCursor(0, 1);
@@ -151,7 +151,7 @@ void calculateRMS(void* parameter) {
       lcd.print(P_factor);
     }
     // Add a delay to allow the task to run at a reasonable interval
-    vTaskDelay(100 / portTICK_PERIOD_MS);
+    vTaskDelay(500 / portTICK_PERIOD_MS);
   }
 }
 int findMaxValueIndex(const int data[], int dataSize) {
