@@ -14,8 +14,8 @@
 #define ZMPT101B_Pin 35  // Voltage sensor pin
 #define ACS712_Pin 34    // Current Sensor pin
 //wifi settings
-char ssid[] = "Eng-Student";
-char password[] = "3nG5tuDt";
+const char* ssid = "Eng-Student";
+const char* password = "3nG5tuDt";
 // RMS Filter parameters
 float VtestFrequency = 50;  // Test signal frequency for voltage (Hz)
 float CtestFrequency = 50;  // Test signal frequency for current (Hz)
@@ -238,14 +238,14 @@ void loop() {
 
 void ReadVoltage() {
   // Read voltage sampled array values
-  for (int j = 0; j < 110; j++) {
+  for (int j = 0; j < 210; j++) {
     for (int i = 0; i < numSamples; ++i) { voltageStats.input(voltageSamples[i]); }
   }
   // Log value to the statistics function
 }
 
 void ReadCurrent() {
-  for (int j = 0; j < 50; j++) {
+  for (int j = 0; j < 90; j++) {
     for (int i = 0; i < numSamples; ++i) { currentStats.input(currentSamples[i]); }
   }
   // Log value to the statistics function
