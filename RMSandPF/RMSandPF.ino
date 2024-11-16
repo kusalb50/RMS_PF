@@ -197,7 +197,7 @@ void loop() {
   if ((millis() - lastSampleTime) >= 12000) {  // 12 seconds = 12000 ms
     lastSampleTime = millis();  // Reset the start time
 
-    if (timerCounter < 16) {
+    if (timerCounter < 40) {
       // Increment the counter and start sampling
       timerCounter++;
       sampleIndex = 0;  // Reset the sample index
@@ -238,14 +238,14 @@ void loop() {
 
 void ReadVoltage() {
   // Read voltage sampled array values
-  for (int j = 0; j < 210; j++) {
+  for (int j = 0; j < 500; j++) {
     for (int i = 0; i < numSamples; ++i) { voltageStats.input(voltageSamples[i]); }
   }
   // Log value to the statistics function
 }
 
 void ReadCurrent() {
-  for (int j = 0; j < 90; j++) {
+  for (int j = 0; j < 200; j++) {
     for (int i = 0; i < numSamples; ++i) { currentStats.input(currentSamples[i]); }
   }
   // Log value to the statistics function
