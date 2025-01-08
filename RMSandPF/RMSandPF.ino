@@ -21,7 +21,7 @@ float VtestFrequency = 50;  // Test signal frequency for voltage (Hz)
 float CtestFrequency = 50;  // Test signal frequency for current (Hz)
 // Separate window lengths for voltage and current
 float VwindowLength = 100 / VtestFrequency;  // Window length for voltage averaging
-float CwindowLength = 40 / CtestFrequency;   // Window length for current averaging
+float CwindowLength = 80 / CtestFrequency;   // Window length for current averaging
 // Variables for Voltage Measurement
 float V_RawValue = 0;
 float V_TRMS;                  // Estimated actual voltage in Volts
@@ -40,7 +40,7 @@ unsigned long previousMillis = 0;
 RunningStatistics voltageStats;  // For voltage sensor
 RunningStatistics currentStats;  // For current sensor
 //Sensor data Sampling Parameters
-const int numSamples = 100;  // Number of samples to collect
+const int numSamples = 56;  // Number of samples to collect
 // Arrays to store the samples
 volatile int sampleIndex = 0;  // Index to keep track of collected samples
 int voltageSamples[numSamples];
@@ -202,7 +202,7 @@ void loop() {
       timerCounter++;
       sampleIndex = 0;  // Reset the sample index
       samplingReady = false;  // Reset the sampling flag
-      esp_timer_start_periodic(timerHandle, 200);  // Start the timer (200µs interval = 5kHz)
+      esp_timer_start_periodic(timerHandle, 357);  // Start the timer (200µs interval = 5kHz)
     } else {
       // Timer has run 4 times; initiate data upload process
       if (WiFi.status() != WL_CONNECTED) {
